@@ -1,218 +1,690 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[codz]
-*$py.class
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-# C extensions
-*.so
+from scipy.cluster.hierarchy import dendrogram, linkage
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
-# PyInstaller
-#   Usually these files are written by a python script from a template
-#   before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+# ----- PAGE CONFIG -----
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+st.set_page_config(
+    page_title="Netflix Movies Analysis Dashboard",
+    page_icon="🎬",
+    layout="wide"
+)
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py.cover
-.hypothesis/
-.pytest_cache/
-cover/
 
-# Translations
-*.mo
-*.pot
+# ----- SIDEBAR -----
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+st.sidebar.title("🎬 Netflix Dashboard")
 
-# Flask stuff:
-instance/
-.webassets-cache
 
-# Scrapy stuff:
-.scrapy
+option = st.sidebar.selectbox(
+    "Select Section",
+    [
+        "🏠 Dashboard",
+        "📂 Dataset",
+        "📊 Analysis",
+        "ℹ️ About"
+    ]
+)
 
-# Sphinx documentation
-docs/_build/
 
-# PyBuilder
-.pybuilder/
-target/
+# ----- LOAD DATA -----
 
-# Jupyter Notebook
-.ipynb_checkpoints
+df = None
 
-# IPython
-profile_default/
-ipython_config.py
 
-# pyenv
-#   For a library or package, you might want to ignore these files since the code is
-#   intended to run in multiple environments; otherwise, check them in:
-# .python-version
+if option == "📂 Dataset" or option == "📊 Analysis":
 
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-# Pipfile.lock
+    uploaded_file = st.sidebar.file_uploader(
+        "Upload Netflix CSV",
+        type=["csv"]
+    )
 
-# UV
-#   Similar to Pipfile.lock, it is generally recommended to include uv.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-# uv.lock
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
 
-# poetry
-#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-# poetry.lock
-# poetry.toml
 
-# pdm
-#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
-#   pdm recommends including project-wide configuration in pdm.toml, but excluding .pdm-python.
-#   https://pdm-project.org/en/latest/usage/project/#working-with-version-control
-# pdm.lock
-# pdm.toml
-.pdm-python
-.pdm-build/
 
-# pixi
-#   Similar to Pipfile.lock, it is generally recommended to include pixi.lock in version control.
-# pixi.lock
-#   Pixi creates a virtual environment in the .pixi directory, just like venv module creates one
-#   in the .venv directory. It is recommended not to include this directory in version control.
-.pixi
+# ----- DASHBOARD -----
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
-__pypackages__/
+if option == "🏠 Dashboard":
 
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
+    st.title(
+        "🎬 Netflix Movies Analysis Dashboard"
+    )
 
-# Redis
-*.rdb
-*.aof
-*.pid
 
-# RabbitMQ
-mnesia/
-rabbitmq/
-rabbitmq-data/
+    st.markdown(
+        """
+        ### 📺 Explore Netflix Movies and TV Shows
 
-# ActiveMQ
-activemq-data/
+        This dashboard analyzes Netflix content
+        using data visualization techniques.
+        """
+    )
 
-# SageMath parsed files
-*.sage.py
+    st.info(
+        "Please upload Netflix CSV file from Dataset section."
+    )
 
-# Environments
-.env
-.envrc
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
 
-# Spyder project settings
-.spyderproject
-.spyproject
 
-# Rope project settings
-.ropeproject
+# ----- DATASET -----
 
-# mkdocs documentation
-/site
+elif option == "📂 Dataset":
 
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+    st.title(
+        "📂 Dataset Information"
+    )
 
-# Pyre type checker
-.pyre/
 
-# pytype static type analyzer
-.pytype/
+    if df is not None:
 
-# Cython debug symbols
-cython_debug/
 
-# PyCharm
-#   JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#   be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#   and can be added to the global gitignore or merged into this file.  For a more nuclear
-#   option (not recommended) you can uncomment the following to ignore the entire idea folder.
-# .idea/
+        st.subheader(
+            "Dataset Preview"
+        )
 
-# Abstra
-#   Abstra is an AI-powered process automation framework.
-#   Ignore directories containing user credentials, local state, and settings.
-#   Learn more at https://abstra.io/docs
-.abstra/
 
-# Visual Studio Code
-#   Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
-#   that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
-#   and can be added to the global gitignore or merged into this file. However, if you prefer, 
-#   you could uncomment the following to ignore the entire vscode folder
-# .vscode/
-# Temporary file for partial code execution
-tempCodeRunnerFile.py
+        st.dataframe(
+            df.head(10),
+            use_container_width=True
+        )
 
-# Ruff stuff:
-.ruff_cache/
 
-# PyPI configuration file
-.pypirc
 
-# Marimo
-marimo/_static/
-marimo/_lsp/
-__marimo__/
+        st.subheader(
+            "Dataset Size"
+        )
 
-# Streamlit
-.streamlit/secrets.toml
+
+        col1, col2 = st.columns(2)
+
+
+        with col1:
+
+            st.metric(
+                "Total Rows",
+                df.shape[0]
+            )
+
+
+        with col2:
+
+            st.metric(
+                "Total Columns",
+                df.shape[1]
+            )
+
+
+
+        st.subheader(
+            "Dataset Information"
+        )
+
+
+        info = pd.DataFrame(
+            {
+                "Column Name": df.columns,
+                "Data Type": df.dtypes.astype(str),
+                "Missing Values": df.isnull().sum()
+            }
+        )
+
+
+        st.dataframe(
+            info,
+            use_container_width=True
+        )
+
+
+
+        st.subheader(
+            "Missing Values"
+        )
+
+
+        st.write(
+            df.isnull().sum()
+        )
+
+
+
+        st.subheader(
+            "Duplicate Values"
+        )
+
+
+        duplicate = df.duplicated().sum()
+
+
+        st.write(
+            "Total Duplicate Rows:",
+            duplicate
+        )
+
+
+
+        st.subheader(
+            "Statistical Summary"
+        )
+
+
+        st.dataframe(
+            df.describe(),
+            use_container_width=True
+        )
+
+
+    else:
+
+        st.warning(
+            "Please upload CSV file from sidebar."
+        )# ---------------- ANALYSIS ----------------
+
+elif option == "📊 Analysis":
+
+    st.title(
+        "📊 Netflix Data Analysis"
+    )
+
+
+    if df is not None:
+
+# ----- BAR CHART -----
+
+        if "type" in df.columns:
+
+            st.subheader(
+                "📊 Movie & TV Show Count"
+            )
+
+
+            count = df["type"].value_counts()
+
+
+            fig, ax = plt.subplots()
+
+
+            ax.bar(
+                count.index,
+                count.values
+            )
+
+
+            ax.set_xlabel(
+                "Content Type"
+            )
+
+            ax.set_ylabel(
+                "Count"
+            )
+
+            ax.set_title(
+                "Movie vs TV Show"
+            )
+
+
+            st.pyplot(fig)
+
+# ----- PIE CHART -----
+
+        if "type" in df.columns:
+
+            st.subheader(
+                "🥧 Content Distribution"
+            )
+
+
+            fig, ax = plt.subplots()
+
+
+            ax.pie(
+                count.values,
+                labels=count.index,
+                autopct="%1.1f%%"
+            )
+
+
+            ax.set_title(
+                "Movie and TV Show Percentage"
+            )
+
+
+            st.pyplot(fig)
+
+# ----- LINE CHART -----
+
+        if "release_year" in df.columns:
+
+
+            st.subheader(
+                "📈 Release Year Trend"
+            )
+
+
+            year = (
+                df["release_year"]
+                .value_counts()
+                .sort_index()
+            )
+
+
+            fig, ax = plt.subplots()
+
+
+            ax.plot(
+                year.index,
+                year.values,
+                marker="o"
+            )
+
+
+            ax.set_xlabel(
+                "Release Year"
+            )
+
+            ax.set_ylabel(
+                "Number of Shows"
+            )
+
+            ax.set_title(
+                "Netflix Release Trend"
+            )
+
+
+            st.pyplot(fig)
+
+# ----- HISTOGRAM -----
+
+        if "imdb_rating" in df.columns:
+
+
+            st.subheader(
+                "📉 Rating Histogram"
+            )
+
+
+            fig, ax = plt.subplots()
+
+
+            ax.hist(
+                df["imdb_rating"].dropna(),
+                bins=10
+            )
+
+
+            ax.set_xlabel(
+                "IMDb Rating"
+            )
+
+            ax.set_ylabel(
+                "Frequency"
+            )
+
+
+            st.pyplot(fig)
+
+# ----- SCATTER PLOT -----
+
+        if (
+            "imdb_rating" in df.columns
+            and
+            "popularity" in df.columns
+        ):
+
+
+            st.subheader(
+                "🔵 Rating vs Popularity"
+            )
+
+
+            fig, ax = plt.subplots()
+
+
+            ax.scatter(
+                df["imdb_rating"],
+                df["popularity"]
+            )
+
+
+            ax.set_xlabel(
+                "IMDb Rating"
+            )
+
+            ax.set_ylabel(
+                "Popularity"
+            )
+
+
+            ax.set_title(
+                "Popularity Analysis"
+            )
+
+
+            st.pyplot(fig)
+
+# ----- BOX PLOT -----
+
+        if "runtime_min" in df.columns:
+
+
+            st.subheader(
+                "📦 Runtime Box Plot"
+            )
+
+
+            fig, ax = plt.subplots()
+
+
+            ax.boxplot(
+                df["runtime_min"].dropna()
+            )
+
+
+            ax.set_ylabel(
+                "Runtime Minutes"
+            )
+
+
+            ax.set_title(
+                "Runtime Distribution"
+            )
+
+
+            st.pyplot(fig)
+
+# ----- TOP GENRES ------
+
+        if "listed_in" in df.columns:
+
+
+            st.subheader(
+                "🎭 Top Genres"
+            )
+
+
+            genre = (
+                df["listed_in"]
+                .dropna()
+                .str.split(",")
+                .explode()
+                .str.strip()
+            )
+
+
+            top_genre = (
+                genre
+                .value_counts()
+                .head(10)
+            )
+
+
+            fig, ax = plt.subplots(
+                figsize=(8,4)
+            )
+
+
+            ax.bar(
+                top_genre.index,
+                top_genre.values
+            )
+
+
+            plt.xticks(
+                rotation=45
+            )
+
+
+            ax.set_title(
+                "Top Genres"
+            )
+
+
+            st.pyplot(fig)
+
+# ----- TOP COUNTRIES -----
+
+        if "country" in df.columns:
+
+
+            st.subheader(
+                "🌍 Top Countries"
+            )
+
+
+            country = (
+                df["country"]
+                .dropna()
+                .str.split(",")
+                .explode()
+                .str.strip()
+            )
+
+
+            top_country = (
+                country
+                .value_counts()
+                .head(10)
+            )
+
+
+            fig, ax = plt.subplots(
+                figsize=(8,4)
+            )
+
+
+            ax.bar(
+                top_country.index,
+                top_country.values
+            )
+
+
+            plt.xticks(
+                rotation=45
+            )
+
+
+            ax.set_title(
+                "Top Countries"
+            )
+
+
+            st.pyplot(fig)
+
+ # ----- TOP DIRECTORS -----
+
+        if "director" in df.columns:
+
+
+            st.subheader(
+                "🎥 Top Directors"
+            )
+
+
+            director = (
+                df["director"]
+                .dropna()
+                .str.split(",")
+                .explode()
+                .str.strip()
+            )
+
+
+            top_director = (
+                director
+                .value_counts()
+                .head(10)
+            )
+
+
+            fig, ax = plt.subplots(
+                figsize=(8,4)
+            )
+
+
+            ax.bar(
+                top_director.index,
+                top_director.values
+            )
+
+
+            plt.xticks(
+                rotation=45
+            )
+
+
+            ax.set_title(
+                "Top Directors"
+            )
+
+
+            st.pyplot(fig)
+
+# ----- HEATMAP -----
+
+        st.subheader(
+            "🔥 Correlation Heatmap"
+        )
+
+
+        numeric = df.select_dtypes(
+            include="number"
+        )
+
+
+        if len(numeric.columns) > 1:
+
+
+            fig, ax = plt.subplots(
+                figsize=(8,5)
+            )
+
+
+            sns.heatmap(
+                numeric.corr(),
+                annot=True,
+                cmap="coolwarm",
+                ax=ax
+            )
+
+
+            st.pyplot(fig)
+
+
+        else:
+
+            st.warning(
+                "Need more numeric columns for Heatmap"
+            )
+
+# ----- DENDROGRAM -----
+
+        st.subheader(
+            "🌳 Dendrogram"
+        )
+
+
+        if len(numeric.columns) > 1:
+
+
+            data = numeric.dropna()
+
+
+            linked = linkage(
+                data,
+                method="ward"
+            )
+
+
+            fig, ax = plt.subplots(
+                figsize=(10,5)
+            )
+
+
+            dendrogram(
+                linked,
+                ax=ax
+            )
+
+
+            ax.set_title(
+                "Hierarchical Clustering"
+            )
+
+
+            st.pyplot(fig)
+
+
+        else:
+
+            st.warning(
+                "Need more numeric columns for Dendrogram"
+            )
+
+
+    else:
+
+        st.warning(
+            "Please upload CSV file first."
+        )
+# ----- ABOUT -----
+elif option == "ℹ️ About":
+
+    st.title("ℹ️ About Project")
+
+    st.header("🎬 Netflix Movies Analysis Dashboard")
+
+    st.write(
+        "This project analyzes Netflix Movies and TV Shows using "
+        "Python and Streamlit. It helps users explore the dataset "
+        "through visualizations and machine learning prediction."
+    )
+
+    st.header("🛠 Technologies Used")
+
+    st.markdown("""
+    - Python
+    - Streamlit
+    - Pandas
+    - Matplotlib
+    - Seaborn
+    - Scikit-learn
+    - Scipy
+    """)
+
+    st.header("📂 Dataset")
+
+    st.markdown("""
+    - Netflix Movies & TV Shows Dataset
+    - 500+ Records
+    - Multiple Features
+    - Movies and TV Shows Information
+    """)
+
+    st.header("✨ Key Features")
+
+    st.markdown("""
+    - Dashboard Overview
+    - Dataset Upload
+    - Dataset Preview
+    - Data Analysis
+    - Interactive Charts
+    - Correlation Heatmap
+    - Dendrogram
+    - Machine Learning Prediction
+    """)
+
+    st.header("🎯 Objective")
+
+    st.write(
+        "To analyze Netflix Movies and TV Shows using data visualization "
+        "and machine learning techniques."
+    )
+
+    st.header("👨‍💻 Developed By")
+
+    st.success("Pranjal Shinde\n\nDiploma IT")
